@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.venv/
+.env
+.env.*
+private-system-prompt.txt
+private/
+my-carriers.json
+carriers.json
+private-*.json
+*.key

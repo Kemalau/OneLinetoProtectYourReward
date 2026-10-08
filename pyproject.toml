@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "keyflip-api"
+version = "0.4.0"
+description = "Key-derived private scoring instructions for a Judge API"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Kemalau/OneLinetoProtectYourReward"
+Issues = "https://github.com/Kemalau/OneLinetoProtectYourReward/issues"
+
+[project.scripts]
+keyflip-api = "keyflip_api.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
