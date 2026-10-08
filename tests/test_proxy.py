@@ -47,7 +47,7 @@ class ProxyTests(unittest.TestCase):
 
     def start_proxy(self, **kwargs):
         config = ProxyConfig(
-            prompt=PromptConfig(key="mock-secret", k=2, carrier_pool=tuple(
+            prompt=PromptConfig(k=2, carrier_pool=tuple(
                 Carrier(f"test_{i}", "Test tasks", "Test alternatives; abstain when undefined")
                 for i in range(2))),
             upstream_url=f"http://127.0.0.1:{self.upstream.server_port}/v1/chat/completions",
@@ -78,7 +78,8 @@ class ProxyTests(unittest.TestCase):
         self.assertEqual(upstream["temperature"], payload["temperature"])
         self.assertEqual(upstream["response_format"], payload["response_format"])
         self.assertIn("PRIVATE PROVIDER SCORING POLICY", upstream["messages"][0]["content"])
-        self.assertNotIn("mock-secret", json.dumps(upstream))
+        self.assertIn("Test alternatives; abstain when undefined", upstream["messages"][0]["content"])
+        self.assertNotIn("c_j(x)", upstream["messages"][0]["content"])
         self.assertEqual(upstream["messages"][1:], payload["messages"])
 
     def test_sse_and_client_authorization_pass_through(self):

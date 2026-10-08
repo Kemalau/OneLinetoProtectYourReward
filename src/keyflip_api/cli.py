@@ -9,12 +9,10 @@ from .server import ProxyConfig, make_server
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Inject key-derived private instructions into a Judge API")
+    parser = argparse.ArgumentParser(description="Inject your explicit private scoring preferences into a Judge API")
     sub = parser.add_subparsers(dest="command", required=True)
     for command in ("prompt", "serve"):
         cmd = sub.add_parser(command)
-        cmd.add_argument("--key", help="watermark key (prefer the KEYFLIP_KEY environment variable)")
-        cmd.add_argument("--key-env", default="KEYFLIP_KEY")
         cmd.add_argument("--k", type=int, help="number of selected carriers; defaults to all available carriers")
         cmd.add_argument("--carrier-file", type=Path, required=True, help="your private carrier definitions; no carriers are bundled")
         cmd.add_argument("--carriers", help="ordered, comma-separated carrier identifiers; defaults to the whole pool")
@@ -34,7 +32,6 @@ def main(argv: list[str] | None = None) -> int:
     serve.add_argument("--port", type=int, default=8000)
     args = parser.parse_args(argv)
     try:
-        key = args.key if args.key is not None else os.environ.get(args.key_env, "")
         carrier_pool = load_carriers(args.carrier_file)
         carrier_ids = (tuple(c.strip() for c in args.carriers.split(","))
                        if args.carriers is not None else tuple(c.identifier for c in carrier_pool))
@@ -44,7 +41,6 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError("score_max must be positive")
             rho = args.strength / args.score_max
         config = PromptConfig(
-            key=key,
             k=args.k if args.k is not None else len(carrier_ids),
             rho=rho,
             score_max=args.score_max,
@@ -77,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
     except (ValueError, OSError) as exc:
         parser.error(str(exc))
     print(f"Judge proxy listening on http://{args.host}:{server.server_port}/v1/chat/completions "
-          f"(pointwise-v2, k={config.k}, rho={config.rho:g}, R={config.score_max:g}, r_min={config.min_score:g})", flush=True)
+          f"(pointwise-direct-v1, k={config.k}, rho={config.rho:g}, R={config.score_max:g}, r_min={config.min_score:g})", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

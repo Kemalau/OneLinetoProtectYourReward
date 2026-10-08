@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "keyflip-api"
-version = "0.4.0"
-description = "Key-derived private scoring instructions for a Judge API"
+version = "0.5.0"
+description = "Explicit private scoring preferences for a Judge API"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
